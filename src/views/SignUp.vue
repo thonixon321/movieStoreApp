@@ -20,11 +20,14 @@
           </label>
           <input v-model="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email">
         </div>
-        <div class="mb-6">
+        <div class="">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
             Password
           </label>
           <input v-model="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+        </div>
+        <div class='relative mb-3 h-6'>
+          <p v-if="feedback" class="absolute top-0 left-0 text-red-600">{{ feedback }}</p>
         </div>
         <div class="flex items-center justify-center">
           <button @click="submitCustomer" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
@@ -90,10 +93,29 @@ export default {
 
     //direct user to store once signed up
     submitCustomerResponse(res) {
-      console.log(res)
-      this.$router.push({name: "Home", params:{customer: this.email}})
-      this.$store.dispatch('changeLogInStatus', true)
-      this.$store.dispatch('changeLogInEmail', this.email)
+      var customer;
+      //
+      if (res.data.message === 'signed up successfully') {
+        customer = {
+          customer_id: res.data.customer_id,
+          email: res.data.email
+        }
+        this.$store.dispatch('customer/setLoggedInCustomer', customer)
+        this.$router.push({name: "Home", params:{customer: this.email}})
+        this.$store.dispatch('changeLogInStatus', true)
+        this.$store.dispatch('changeLogInEmail', this.email)
+      }
+      else {
+        if (res.data.indexOf('invalid email') !== -1) {
+          this.feedback = 'invalid email'
+        }
+        else if (res.data.indexOf('invalid password') !== -1){
+          this.feedback = 'invalid password, should be at least 8 characters'
+        }
+        else{
+          this.feedback = 'error in sign up'
+        }
+      }
     }
   }
 

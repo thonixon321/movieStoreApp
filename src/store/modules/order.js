@@ -11,7 +11,6 @@ export const getters = {
   },
 
   getOrderHistoryByCustomerEmail: state => email => {
-    console.log(state.ordersHistory.filter(history => history.email === email))
     if (state.ordersHistory.length) {
       return state.ordersHistory.filter(history => history.email === email)
     }

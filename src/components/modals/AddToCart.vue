@@ -103,10 +103,10 @@ export default {
     ...mapState({
       loggedIn: state => state.loggedIn,
       cart: state => state.order.orders,
+      customerLoggedIn: state => state.customer.loggedInCustomer
     }),
 
     ...mapGetters({
-      customerLoggedIn: 'customer/getLoggedInCustomerByEmail',
       productInCart: 'order/getOrderByProductId'
     }),
 
@@ -117,7 +117,7 @@ export default {
     addToCart(type, movie) {
       console.log(type)
       if (this.loggedIn) {
-        let customerId = this.customerLoggedIn(this.customer).customer_id
+        let customerId = this.customerLoggedIn.customer_id
 
         movie.customer_id = customerId
         this.purchaseType = type
@@ -167,12 +167,6 @@ export default {
           return 'Buy'
         }
       }
-    },
-
-
-
-    components: {
-
     }
   }
 

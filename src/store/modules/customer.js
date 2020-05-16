@@ -1,17 +1,11 @@
 export const namespaced = true
 
 export const state =  {
-  customers: []
+  customers: [],
+  loggedInCustomer: {}
 }
 
 export const getters = {
-  getLoggedInCustomer: state => (email, password) => {
-
-    return state.customers.find( customer =>
-      customer.email === email &&
-      customer.password === password
-    )
-  },
 
 
   getLoggedInCustomerByEmail: state => (email) => {
@@ -26,11 +20,27 @@ export const getters = {
 export const mutations = {
   SET_CUSTOMERS(state, customers) {
     state.customers = customers
+  },
+
+  SET_LOGGED_IN_CUST(state, customer) {
+    state.loggedInCustomer = customer
+  },
+
+  DELETE_CUST(state) {
+    state.loggedInCustomer = {}
   }
 }
 
 export const actions = {
   fetchedCustomers({ commit }, customers) {
     commit('SET_CUSTOMERS', customers)
+  },
+
+  setLoggedInCustomer({ commit }, customer) {
+    commit('SET_LOGGED_IN_CUST', customer)
+  },
+
+  deleteCustomer({ commit }) {
+    commit('DELETE_CUST')
   }
 }

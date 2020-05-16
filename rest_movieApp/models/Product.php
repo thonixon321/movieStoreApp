@@ -10,6 +10,7 @@ class Product {
   public $genre;
   public $product_type;
   public $description;
+  public $search;
   public $quantity_in_stock;
 
   public function __construct($db) {
@@ -66,13 +67,32 @@ class Product {
     $query =
       'SELECT *
       FROM products
-      ORDER BY product_id';
+      ORDER BY `name`';
 
     $stmt = $this->conn->prepare($query);
 
     $stmt->execute();
 
     return $stmt;
+  }
+
+  public function read_search() {
+    //find movie titles that have a match, anywhere in their title, for the user search
+    $has = "%$this->search%";
+    $query =
+    'SELECT *
+    FROM products
+    WHERE `name` LIKE :has
+    ORDER BY `name`';
+
+    $stmt = $this->conn->prepare($query);
+    $has = htmlspecialchars($has);
+    $stmt->bindParam(':has', $has);
+
+    $stmt->execute();
+
+    return $stmt;
+
   }
 
 }

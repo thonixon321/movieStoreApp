@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Success v-if="!modalHidden"/>
+    <CreditCard :showLoader="showLoader" @closeInfo="creditCardModalHidden = true" @placeOrder="checkout" v-if="!creditCardModalHidden" />
     <h2 class="text-3xl mb-4">Cart Items:</h2>
     <ul>
       <li class="bg-white ml-4 mb-4 flex items-center rounded h-48 shadow-lg" v-for="(item, i) in cart" :key="i">
@@ -28,14 +28,14 @@
     <div class='ml-4 mt-6 font-bold text-xl'>
      Total: ${{ totalPrice }}
     </div>
-    <button class="ml-4 mt-6 mb-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="checkout">Checkout</button>
+    <button class="ml-4 mt-6 mb-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="insertInfo">Checkout</button>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { axiosHandler } from '../mixins/axiosHandler'
-import Success from '../components/modals/Success'
+import CreditCard from '../components/modals/CreditCard'
 
 export default {
   name: 'Checkout',
@@ -45,8 +45,9 @@ export default {
 
   data() {
     return {
-      modalHidden: true,
-      totalPrice: 0
+      creditCardModalHidden: true,
+      totalPrice: 0,
+      showLoader: false
     }
   },
 
@@ -62,6 +63,10 @@ export default {
 
 
   methods: {
+    insertInfo() {
+      this.creditCardModalHidden = false
+    },
+
     getTotalPrice() {
       let totalPrice = 0
 
@@ -91,7 +96,7 @@ export default {
             total_price: this.totalPrice,
             order_items: []
           };
-
+      this.showLoader = true
       this.cart.forEach((el) => {
         payloadObj.order_items.push(el)
       })
@@ -115,9 +120,8 @@ export default {
 
       console.log(res)
       this.$store.dispatch('order/clearOrder')
-      this.modalHidden = false
       setTimeout(() => {
-        self.modalHidden = true
+        this.creditCardModalHidden = true
         self.$router.push({name: 'Home', params:{customer: self.loggedInEmail}})
       }, 2000)
 
@@ -138,7 +142,7 @@ export default {
 
 
   components: {
-    Success
+    CreditCard
   }
 
 }
