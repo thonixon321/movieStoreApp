@@ -22,6 +22,7 @@ export const axiosHandler = {
       axios({
         method: axiosMethod,
         url: axiosUrl,
+        withCredentials: true,
         headers: headerObj,
         data: data,
         params: params

@@ -1,32 +1,12 @@
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-  <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <title>Movie App</title>
-</head>
-<body>
-  <div>Hello movie app!</div>
-  <?php
-    $postItems = [
-      [
-        'product_id' => 1,
-        'quantity' => 1
-      ],
-      [
-        'product_id' => 2,
-        'quantity' => 1
-      ]
-      ];
-    $order_items = [];
+<?php
 
-    foreach ($postItems as $order) {
-      $order_items[] = '(LAST_INSERT_ID(),' . $order['product_id'] . ',' . $order['quantity'] . ')';
-    }
+// /* Start the Session */
+// session_start();
 
-    // echo $order_items . '<br>';
-    echo implode(',', $order_items);
+// /* Check whether we already set 'visits' for this remote client */
+// if (!array_key_exists('visits', $_SESSION))
+// {
+//    $_SESSION['visits'] = 0;
+// }
 
-  ?>
-</body>
-</html>
+// echo 'You visited this page ' . $_SESSION['visits']++ . ' times.';

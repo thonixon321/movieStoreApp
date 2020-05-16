@@ -1,11 +1,7 @@
 <?php
-
-//THIS ENDPOINT READS ALL THE DATA IN POSTS TABLE
-
-//Headers (required for http request)
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:8082');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
-
 include_once '../../config/Database.php';
 include_once '../../models/Customer.php';
 
@@ -20,7 +16,7 @@ $customer = new Customer($db);
 $result = $customer->read();
 
 $num = $result->rowCount();
-
+//if the query gave a response with at least one row of data
 if ($num > 0) {
   $customers_arr = array();
 

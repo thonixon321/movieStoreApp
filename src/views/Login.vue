@@ -23,9 +23,9 @@
           </button>
         </div>
         <div class="flex justify-center">
-          <a class="inline-block align-baseline font-bold text-sm mx-6 text-blue-500 hover:text-blue-800" href="#">
+          <router-link :to="{name: 'ChangePassword'}" class="inline-block align-baseline font-bold text-sm mx-6 text-blue-500 hover:text-blue-800" href="#">
             Forgot Password?
-          </a>
+          </router-link>
           <router-link :to="{name: 'SignUp'}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
             New user? Sign up here!
           </router-link>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { axiosHandler } from '../mixins/axiosHandler'
 
 export default {
   name: 'Login',
@@ -49,24 +49,50 @@ export default {
     }
   },
 
+  mixins: [axiosHandler],
+
   computed: {
-    ...mapGetters({
-      logInConfirmed: 'customer/getLoggedInCustomer'
-    })
+
   },
 
 
   methods: {
     logInCustomer() {
-      console.log(this.logInConfirmed(this.email, this.password))
-      if (this.logInConfirmed(this.email, this.password)) {
-        this.$router.push({name: 'Home', params: {customer: this.email}})
+      var settingsObj,
+          payloadObj;
+
+      settingsObj = {
+              url: 'http://localhost:8080/rest_movieApp/api/customer/login.php',
+              method: 'POST',
+              callBack: this.logInResponse
+      }
+
+      payloadObj = {
+        email: this.email,
+        password: this.password
+      }
+
+      this.sendAxios(payloadObj, settingsObj);
+    },
+
+    logInResponse(res) {
+      var customer;
+      console.log(res.data)
+
+      if (res.data.message === 'logged in successfully') {
+        customer = {
+          customer_id: res.data.customer_id,
+          email: res.data.email
+        }
+        this.$store.dispatch('customer/setLoggedInCustomer', customer)
         this.$store.dispatch('changeLogInStatus', true)
         this.$store.dispatch('changeLogInEmail', this.email)
+        this.$router.push({name: 'Home', params: {customer: this.email}})
       }
       else{
         this.feedback = 'email and/or password is incorrect'
       }
+
     }
   }
 

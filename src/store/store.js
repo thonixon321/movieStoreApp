@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import * as customer from './modules/customer'
 import * as order from './modules/order'
+import * as product from './modules/product'
 
 //import all public items into the user namespace - so user.user can
 //access the value that was exported from this file
@@ -12,7 +13,8 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   modules: {
     customer,
-    order
+    order,
+    product
   },
 
   state: {

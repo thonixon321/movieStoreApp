@@ -1,11 +1,7 @@
 <?php
-
-//THIS ENDPOINT READS ALL THE DATA IN POSTS TABLE
-
-//Headers (required for http request)
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:8082');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
-
 include_once '../../config/Database.php';
 include_once '../../models/Product.php';
 
