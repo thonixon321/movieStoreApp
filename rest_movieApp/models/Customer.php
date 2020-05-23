@@ -247,7 +247,9 @@ public function login() {
     if (password_verify($this->password, $row['password'])) {
       /* Authentication succeeded. Set the class properties (id and email) */
 			$this->customer_id = intval($row['customer_id'], 10);
-			$this->email = $row['email'];
+      $this->email = $row['email'];
+      $this->first_name = $row['first_name'];
+      $this->last_name = $row['last_name'];
 			$this->authenticated = true;
 
 			/* Register the current Sessions on the database */

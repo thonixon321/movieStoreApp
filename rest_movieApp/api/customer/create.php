@@ -29,6 +29,7 @@ if (! empty($_POST['email']) && $customer->create()) {
      array(
        'message' => 'signed up successfully',
        'email' => $customer->getEmail(),
+       'name' => $customer->getName(),
        'customer_id' => $customer->getId()
      )
    );

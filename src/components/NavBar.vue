@@ -99,6 +99,14 @@ export default {
 </script>
 
 <style scoped>
+  nav {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 5;
+  }
+
   img.storeLogo {
     width: 15em;
     height: 8em;

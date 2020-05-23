@@ -79,7 +79,8 @@ class Order {
         p.name,
         p.price,
         p.type,
-        p.image
+        p.image,
+        p.movie_id
       FROM customers c
       JOIN orders o
         ON c.customer_id = o.customer_id
@@ -87,7 +88,7 @@ class Order {
         ON o.order_id = od.order_id
       JOIN products p
         ON od.product_id = p.product_id
-      ORDER BY o.order_date';
+      ORDER BY o.order_date DESC';
 
     $stmt = $this->conn->prepare($query);
 

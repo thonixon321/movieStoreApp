@@ -29,9 +29,7 @@ if ($num > 0) {
     $customer_item = array(
       'customer_id' => $customer_id,
       'first_name' => $first_name,
-      'last_name' => $last_name,
-      'password' => $password,
-      'email' => $email
+      'last_name' => $last_name
     );
 
     array_push($customers_arr['data'], $customer_item);

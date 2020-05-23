@@ -42,7 +42,8 @@ if ($num > 0) {
       'name' => $name,
       'price' => $price,
       'type' => $type,
-      'image' => $image
+      'image' => $image,
+      'movie_id' => $movie_id
     );
 
     array_push($orders_arr['data'], $order_item);
