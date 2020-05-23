@@ -19,7 +19,7 @@
                 </div>
               </div>
           </div>
-          <div class='modalCardFooter bg-blue-400'>
+          <div class='modalCardFooter text-white bg-indigo-900'>
             <div v-for="(movieType, iterate) in movie" :key="iterate">
               <a v-if="checkAvailability(movieType) === 'Rental'"
               @click="addToCart(movieType.type, movieType)" class="buyLink">
@@ -27,7 +27,7 @@
                 <p class='font-bold'>Rent</p>
                 <p class='price'>$ {{ movieType.price }}</p>
               </a>
-              <a v-if="checkAvailability(movieType) === 'Buy'"
+              <a v-else-if="checkAvailability(movieType) === 'Buy'"
               @click="purchaseType = 'buy', addedToCart = true, typeSelected = movieType.type"
               class="buyLink">
                 <i class='material-icons'>local_atm</i>
@@ -35,6 +35,7 @@
                 <p class='price'>$ {{ movieType.price }}</p>
               </a>
             </div>
+            <div v-if="!available">Not available</div>
           </div>
         </div>
         <div v-else class='modalCard'>
@@ -89,7 +90,8 @@ export default {
       addedToCart: false,
       purchaseType: '',
       typeSelected: '',
-      modalHidden: true
+      modalHidden: true,
+      available: false
     }
   },
 
@@ -153,17 +155,21 @@ export default {
       if (movie.type === 'Rental') {
         console.log(movie)
         if (alreadyInCart || movie.quantity_in_stock == 0) {
+          this.available = false
           return false
         }
         else {
+          this.available = true
           return 'Rental'
         }
       }
       else{
-        if (alreadyInCart) {
+        if (alreadyInCart || movie.quantity_in_stock == 0) {
+          this.available = false
           return false
         }
         else {
+          this.available = true
           return 'Buy'
         }
       }

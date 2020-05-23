@@ -25,6 +25,7 @@ if (! empty($_POST['email']) && $customer->login()) {
     array(
       'message' => 'logged in successfully',
       'email' => $customer->getEmail(),
+      'name' => $customer->getName(),
       'customer_id' => $customer->getId()
     )
   );

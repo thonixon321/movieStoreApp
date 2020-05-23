@@ -2,7 +2,7 @@
   <div id="app" >
     <!-- the key here makes sure components get reloaded when the url changes, including query params -->
     <NavBar />
-    <router-view class="mx-16" />
+    <router-view class="mt-56 mx-16" />
 
   </div>
 </template>

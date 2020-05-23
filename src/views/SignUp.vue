@@ -98,7 +98,8 @@ export default {
       if (res.data.message === 'signed up successfully') {
         customer = {
           customer_id: res.data.customer_id,
-          email: res.data.email
+          email: res.data.email,
+          name: res.data.name
         }
         this.$store.dispatch('customer/setLoggedInCustomer', customer)
         this.$router.push({name: "Home", params:{customer: this.email}})

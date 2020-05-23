@@ -78,6 +78,8 @@ export const mutations = {
           newObj.order_date = el.order_date
           newObj.quantity = el.quantity
           newObj.image = el.image
+          newObj.movie_id = el.movie_id
+          newObj.rating = false
 
           innerEl[keyName].push(newObj)
           innerEl.orderItems.push(newObj)

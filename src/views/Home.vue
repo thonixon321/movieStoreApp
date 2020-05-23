@@ -1,6 +1,7 @@
 <template>
   <div>
     <AddToCart @closeModal="modalHidden = true" :customer="customer" :movie="movieSelected" v-if="!modalHidden" />
+    <Reviews v-if="usersRatings.length" :ratings="usersRatings" />
     <form @submit.prevent="searchMovies" class="search pt-2 relative mx-auto text-gray-600">
       <input v-model="search" class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
         type="search" name="search" placeholder="Search">
@@ -21,7 +22,7 @@
           <div v-if="i == 0" class="movieCard max-w-sm rounded overflow-hidden mx-4 mb-10 shadow-lg">
             <img class="w-full" :src="type.image" alt="movie image">
             <div class="relative px-6 py-4 movieDesc">
-              <button @click="openModal(movie[movieTitles[index]])" class="addToCart">
+              <button @click="openModal(movie[movieTitles[index]])" class="addToCart" title="add to cart">
                 <i class="material-icons">add_shopping_cart</i>
               </button>
               <div class="font-bold text-xl mb-2">{{ type.name }}</div>
@@ -29,8 +30,27 @@
                 {{ type.description }}
               </p>
             </div>
-            <div class="px-6 py-4 movieDesc">
-              <span v-for="(genre, g) in splitGenres(type.genre)" :key="g" class="inline-block bg-indigo-900 rounded-full px-3 py-1 text-white text-sm font-semibold mr-2">#{{ genre }}</span>
+            <div class="px-6 flex justify-between mb-2">
+              <div class="flex h-8">
+
+                <div v-for="(genre, g) in splitGenres(type.genre)" :key="g" class="inline-block bg-indigo-900 rounded-full px-3 py-1 text-white text-sm font-semibold mr-2">
+                  #{{ genre }}
+                </div>
+              </div>
+              <div v-if="type.ratings.length" class="flex flex-col">
+                <div class="flex flex-col items-center mb-4">
+                  <div class="text-sm font-bold">
+                    Customer Rating:
+                  </div>
+                  <div class="text-sm font-bold">
+                    {{ type.ratings[0].rating_avg * 100 }}%
+                  </div>
+                  <a href='#' @click="goToReviews(type.ratings)" class="underline font-bold text-sm">See Reviews</a>
+                </div>
+              </div>
+              <div class="text-sm font-bold" v-else>
+                No Ratings
+              </div>
             </div>
           </div>
         </div>
@@ -42,7 +62,9 @@
 <script>
 import { axiosHandler } from '../mixins/axiosHandler'
 import AddToCart from '../components/modals/AddToCart'
-import { mapState } from 'vuex'
+import Reviews from '../components/modals/Reviews'
+
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
@@ -56,6 +78,8 @@ export default {
       modalHidden: true,
       movieSelected: {},
       moviesArr: [],
+      moviesRatings: [],
+      usersRatings: [],
       search: ''
     }
   },
@@ -67,10 +91,15 @@ export default {
     ...mapState({
       loggedIn: state => state.loggedIn,
       storedCustomer: state => state.customer.loggedInCustomer,
+      allCustomers: state => state.customer.customers,
       allProducts: state => state.product.products,
       movieTitles: state => state.product.titles
     }),
 
+
+    ...mapGetters({
+      userIdsWhoRatedProduct: 'product/getUserIdsThatRatedProduct'
+    }),
 
   },
 
@@ -127,13 +156,19 @@ export default {
 
           organizedMoviesArr.forEach((innerEl) => {
             let newObj = {}
+            let newArr = []
             let keyName = ''
 
             for (var key in innerEl) {
               keyName = key
             }
+            //match any movie ratings associated with the movie_id
+            this.moviesRatings.forEach((ratingEl) => {
+              if (ratingEl.movie_id == keyName) {
+                newArr.push(ratingEl)
+              }
+            })
             //match the key name (innerEl) to the movie_id
-
             if (keyName === el.movie_id) {
               newObj.product_id = el.product_id
               newObj.name = el.name
@@ -143,7 +178,8 @@ export default {
               newObj.description = el.description
               newObj.quantity_in_stock = el.quantity_in_stock
               newObj.image = el.image
-
+              newObj.ratings = newArr
+              //need an array of ratings (objects with info about customer who rated, rating, rating message)
               innerEl[keyName].push(newObj)
             }
           })
@@ -158,6 +194,33 @@ export default {
     },
 
 
+    getMoviesRatingsResponse(res) {
+      var settingsObj,
+          payloadObj;
+      console.log(res.data)
+      this.moviesRatings = res.data
+
+      settingsObj = {
+        url: 'http://localhost:8080/rest_movieApp/api/product/read.php',
+        method: 'GET',
+        callBack: this.getMoviesResponse
+      }
+
+      payloadObj = {}
+
+      this.sendAxios(payloadObj, settingsObj)
+
+    },
+
+
+    getCustomersResponse(res) {
+      console.log(res.data.data)
+
+      if (res.data.data.length) {
+        this.$store.dispatch('customer/fetchedCustomers', res.data.data)
+      }
+    },
+
 
     getSessLoginResponse(res) {
       var customer,
@@ -171,7 +234,8 @@ export default {
         this.email = res.data.email
         customer = {
           customer_id: res.data.customer_id,
-          email: res.data.email
+          email: res.data.email,
+          name: res.data.name
         }
         this.$store.dispatch('customer/setLoggedInCustomer', customer)
         this.$store.dispatch('changeLogInStatus', true)
@@ -202,6 +266,25 @@ export default {
       if (res.data.message !== "No orders Found") {
         this.$store.dispatch('order/setOrderHistory', res.data.data)
       }
+    },
+
+
+    goToReviews(ratings) {
+      console.log(ratings)
+      let titlesArr = []
+
+      ratings.forEach((el) => {
+        let foundCustomer = this.allCustomers.find(customer => customer.customer_id === el.customer_id)
+        if (titlesArr.indexOf(el.customer_id) === -1) {
+          if (foundCustomer) {
+            console.log(foundCustomer)
+            el.name = foundCustomer.first_name + " " + foundCustomer.last_name
+          }
+          this.usersRatings.push(el)
+          titlesArr.push(el.customer_id)
+        }
+      })
+
     }
   },
 
@@ -217,11 +300,11 @@ export default {
           url: 'http://localhost:8080/rest_movieApp/api/customer/sess-login.php',
           method: 'GET',
           callBack: this.getSessLoginResponse
-        };
+        }
 
-      payloadObj = {};
+      payloadObj = {}
 
-      this.sendAxios(payloadObj, settingsObj);
+      this.sendAxios(payloadObj, settingsObj)
       //fetch all of our products to display
     }
     //need to fetch order history if user is logged in
@@ -231,29 +314,42 @@ export default {
           method: 'GET',
           callBack: this.getOrderHistoryResponse
         }
+
         payloadObj = {}
 
-        this.sendAxios(payloadObj, settingsObj);
+        this.sendAxios(payloadObj, settingsObj)
     }
     //get products if they aren't already in vuex store
     if (this.allProducts.length === 0) {
       settingsObj = {
-        url: 'http://localhost:8080/rest_movieApp/api/product/read.php',
+        url: 'http://localhost:8080/rest_movieApp/api/product/read-ratings.php',
         method: 'GET',
-        callBack: this.getMoviesResponse
-      };
+        callBack: this.getMoviesRatingsResponse
+      }
 
-      payloadObj = {};
+      payloadObj = {}
 
-      this.sendAxios(payloadObj, settingsObj);
+      this.sendAxios(payloadObj, settingsObj)
+
     }
+
+    settingsObj = {
+        url: 'http://localhost:8080/rest_movieApp/api/customer/read.php',
+        method: 'GET',
+        callBack: this.getCustomersResponse
+      }
+
+    payloadObj = {}
+
+    this.sendAxios(payloadObj, settingsObj)
 
 
   },
 
 
   components: {
-    AddToCart
+    AddToCart,
+    Reviews
   }
 
 }
@@ -265,7 +361,7 @@ export default {
   }
 
   div.movieCard {
-    height: 42em;
+    height: 43em;
     background: white;
   }
 

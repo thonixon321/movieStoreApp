@@ -25,7 +25,8 @@ if ($login) {
   $userArr = array(
     'message' => 'auth success',
     'email' => $customer->getEmail(),
-    'customer_id' => $customer->getId()
+    'customer_id' => $customer->getId(),
+    'name' => $customer->getName()
   );
 
   echo json_encode($userArr);

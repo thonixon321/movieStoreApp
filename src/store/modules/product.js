@@ -6,7 +6,22 @@ export const state =  {
 }
 
 export const getters = {
+  getUserIdsThatRatedProduct: state => movieId => {
+    var userIds = []
 
+    state.products.forEach((el) => {
+      console.log(el[movieId])
+      if (el[movieId] !== undefined) {
+        el[movieId].forEach((innerEl) => {
+          if (innerEl.ratings.length) {
+            userIds = innerEl.ratings
+          }
+        })
+      }
+    })
+
+    return userIds
+  }
 }
 
 export const mutations = {

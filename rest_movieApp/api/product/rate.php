@@ -19,22 +19,21 @@ $db = $database->connect();
 $product = new Product($db);
 //needed for axios
 $_POST = json_decode(file_get_contents("php://input"), true);
-if (isset($_POST['name'])) {
+
+if (isset($_POST['rating']) && isset($_POST['name'])) {
+  $product->rating = $_POST['rating'];
   $product->name = $_POST['name'];
-  $product->price = $_POST['price'];
-  $product->genre = $_POST['genre'];
-  $product->product_type = $_POST['product_type'];
-  $product->description = $_POST['description'];
-  $product->quantity_in_stock = $_POST['quantity_in_stock'];
+  $product->message = $_POST['message'];
+  $product->customer_id = $_POST['customer_id'];
 }
 
-if (! empty($_POST['name']) && $product->create()) {
+if (! empty($_POST['rating']) && $product->rate()) {
   echo json_encode(
-    array('message' => 'product created')
+    array('message' => 'product rated')
   );
 }
 else{
   echo json_encode(
-    array('message' => 'product not created')
+    array('message' => 'product not rated')
   );
 }
