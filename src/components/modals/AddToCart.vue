@@ -59,17 +59,19 @@
               </a>
             </div>
             <div v-else class='buySection'>
-              <h2>How many of <span class="font-bold"> {{ type.name }} </span> would you like to buy?</h2>
-              <div v-for="(movieInnerType, iterateIn) in movie" :key="iterateIn">
-                <div class="quantityContainer" v-if="movieInnerType.type === typeSelected">
-                  <select v-model="quantity" name='typeQuantity' id='typeQuantity'>
-                    <option v-for="(type, i) in parseInt(movieInnerType.quantity_in_stock)" :key="i" :value='i+1'>
-                      {{ i+1 }}
-                    </option>
-                  </select>
-                  <button @click="addToCart('buy', movieInnerType)">Confirm</button>
+              <transition name="slide-fade">
+                <h2>How many of <span class="font-bold"> {{ type.name }} </span> would you like to buy?</h2>
+                <div v-for="(movieInnerType, iterateIn) in movie" :key="iterateIn">
+                  <div class="quantityContainer" v-if="movieInnerType.type === typeSelected">
+                    <select v-model="quantity" name='typeQuantity' id='typeQuantity'>
+                      <option v-for="(type, i) in parseInt(movieInnerType.quantity_in_stock)" :key="i" :value='i+1'>
+                        {{ i+1 }}
+                      </option>
+                    </select>
+                    <button @click="addToCart('buy', movieInnerType)">Confirm</button>
+                  </div>
                 </div>
-              </div>
+              </transition>
             </div>
           </div>
         </div>
@@ -180,18 +182,6 @@ export default {
 </script>
 
 <style scoped>
-  .modalBG {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    z-index: 3;
-    background: rgba(70, 69, 69, 0.6);
-  }
 
     .modalCard {
       max-width: 35em;

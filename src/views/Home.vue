@@ -1,7 +1,11 @@
 <template>
   <div>
-    <AddToCart @closeModal="modalHidden = true" :customer="customer" :movie="movieSelected" v-if="!modalHidden" />
-    <Reviews v-if="usersRatings.length" :ratings="usersRatings" />
+    <transition name="fade">
+      <AddToCart @closeModal="modalHidden = true" :customer="customer" :movie="movieSelected" v-if="!modalHidden" />
+    </transition>
+    <transition name="fade">
+      <Reviews v-if="usersRatings.length" :ratings="usersRatings" />
+    </transition>
     <form @submit.prevent="searchMovies" class="search pt-2 relative mx-auto text-gray-600">
       <input v-model="search" class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
         type="search" name="search" placeholder="Search">
@@ -63,7 +67,7 @@
 import { axiosHandler } from '../mixins/axiosHandler'
 import AddToCart from '../components/modals/AddToCart'
 import Reviews from '../components/modals/Reviews'
-
+import gsap from 'gsap'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -189,6 +193,15 @@ export default {
         this.$store.dispatch('product/setProducts', organizedMoviesArr)
         this.$store.dispatch('product/setMovieTitles', this.moviesArr)
       }
+
+      gsap.from('.movieCard', {
+      duration: 0.5,
+      opacity: 0,
+      scale: 0,
+      y: 200,
+      ease: 'power1',
+      stagger: 0.1
+    })
 
 
     },
@@ -343,7 +356,6 @@ export default {
 
     this.sendAxios(payloadObj, settingsObj)
 
-
   },
 
 
@@ -395,4 +407,6 @@ export default {
   .modalHidden {
     display: none;
   }
+
+
 </style>

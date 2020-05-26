@@ -8,6 +8,7 @@ import OrderHistory from './views/OrderHistory'
 import Settings from './views/Settings'
 import ChangePassword from './components/ChangePassword'
 import NewPassword from './components/NewPassword'
+import Gsap from './views/GSAP'
 import { store } from './store/store'
 
 Vue.use(Router)
@@ -59,6 +60,11 @@ const router = new Router({
       name: 'NewPassword',
       props: true,
       component: NewPassword
+    },
+    {
+      path: '/new-password',
+      name: 'Gsap',
+      component: Gsap
     },
 
   ]

@@ -9,7 +9,9 @@
       </div>
       <div class="flex flex-wrap">
         <div v-for="(item, i) in order.orderItems" :key="i">
-          <Rating @closeModal="item.rating = false" :movie_id="item.movie_id" :title="item.name" v-if="item.rating" />
+          <transition name="fade">
+            <Rating @closeModal="item.rating = false" :movie_id="item.movie_id" :title="item.name" v-if="item.rating" />
+          </transition>
           <ul>
             <li class="border-2 ml-4 mb-4 flex items-center rounded">
               <div class="flex flex-col items-center justify-center">
